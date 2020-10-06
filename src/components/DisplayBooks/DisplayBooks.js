@@ -1,20 +1,12 @@
-import React, { useEffect, useState } from 'react';
-import { fetchBooks } from '../../utils/api';
+import React from 'react';
 
-const DisplayBooks = () => {
-	const [ books, setBooks ] = useState([]);
-	console.log(books);
-
-	useEffect(() => {
-		fetchBooks().then((res) => setBooks(res.data)).catch((err) => console.log(err));
-	}, []);
-
+const DisplayBooks = ({ books, handleRemoveBook }) => {
 	return (
 		<div className="display-books">
 			<div className="container">
 				<div className="col-12">
 					<ul className="list-group">
-						{books &&
+						{books ? (
 							books.map((book) => {
 								return (
 									<li key={book.id} className="list-item list-group-item d-flex align-items-center">
@@ -26,13 +18,20 @@ const DisplayBooks = () => {
 											<button type="button" className="btn btn-success">
 												Editera
 											</button>
-											<button type="button" className="btn btn-danger">
+											<button
+												type="button"
+												className="btn btn-danger"
+												onClick={() => handleRemoveBook(book.id)}
+											>
 												Ta bort
 											</button>
 										</div>
 									</li>
 								);
-							})}
+							})
+						) : (
+							<strong style={{ textAlign: 'center' }}>Laddar Böcker...</strong>
+						)}
 					</ul>
 				</div>
 			</div>
