@@ -1,16 +1,6 @@
-import React, { useState } from 'react';
-import { addBook, fetchBooks } from '../../utils/api';
+import React from 'react';
 
-const Form = () => {
-	const [ title, setTitle ] = useState('');
-	const [ author, setAuthor ] = useState('');
-
-	const handleAddBook = (e) => {
-		e.preventDefault();
-		addBook(title, author);
-		fetchBooks();
-	};
-
+const Form = ({ handleAddBook, setTitle, setAuthor }) => {
 	return (
 		<div className="container">
 			<div className="row form-section">
