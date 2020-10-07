@@ -1,6 +1,6 @@
 import React from 'react';
 
-const Form = ({ handleAddBook, setTitle, setAuthor }) => {
+const Form = ({ handleAddBook, setTitle, setAuthor, title, author }) => {
 	return (
 		<div className="container">
 			<div className="row form-section">
@@ -13,6 +13,7 @@ const Form = ({ handleAddBook, setTitle, setAuthor }) => {
 							id="title"
 							aria-describedby="title"
 							placeholder="Lägg till titel"
+							value={title}
 							onChange={(e) => setTitle(e.target.value)}
 						/>
 
@@ -26,6 +27,7 @@ const Form = ({ handleAddBook, setTitle, setAuthor }) => {
 							data-gramm_id="63b74fb6-c7e4-7f0e-0c1f-438d47ac87a0"
 							data-gramm_editor="true"
 							placeholder="Lägg till författare"
+							value={author}
 							onChange={(e) => setAuthor(e.target.value)}
 						/>
 					</div>

@@ -16,7 +16,7 @@ const App = () => {
 	const handleFetchBooks = async () => {
 		try {
 			setLoading(true);
-			await fetchBooks().then((res) => setBooks(res.data)).catch((err) => console.log(err));
+			await fetchBooks().then((res) => setBooks(res.data)).catch((err) => console.error(err));
 			setCount(books.length);
 			setLoading(false);
 		} catch (error) {
@@ -29,6 +29,8 @@ const App = () => {
 			e.preventDefault();
 			await addBook(title, author);
 			setCount(books.length);
+			setTitle('');
+			setAuthor('');
 			handleFetchBooks();
 		} catch (error) {
 			setError('Kunde ej lägga till bok');
@@ -49,7 +51,6 @@ const App = () => {
 		try {
 			await updateBook(id, title, author);
 			setIsEdit({ open: false, selectedId: id });
-			console.log(isEdit);
 			handleFetchBooks();
 		} catch (error) {
 			setError('Kunde ej lägga till bok');
@@ -71,7 +72,13 @@ const App = () => {
 	return (
 		<div className="App">
 			<Header getNewApiKey={getNewApiKey} />
-			<Form setTitle={setTitle} setAuthor={setAuthor} handleAddBook={handleAddBook} />
+			<Form
+				setTitle={setTitle}
+				setAuthor={setAuthor}
+				handleAddBook={handleAddBook}
+				title={title}
+				author={author}
+			/>
 			{error && <span style={{ color: 'red', textAlign: 'center' }}>{error}</span>}
 			<DisplayBooks
 				count={count}
