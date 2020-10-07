@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import Header from './components/Header/Header';
-import Form from './components/Form/Form';
-import DisplayBooks from './components/DisplayBooks/DisplayBooks';
-import { addBook, fetchBooks, removeBook, requestApiKey } from './utils/api';
+import Header from './components/Header';
+import Form from './components/Form';
+import DisplayBooks from './components/DisplayBooks';
+import { addBook, fetchBooks, removeBook, updateBook, requestApiKey } from './utils/api';
 
 const App = () => {
 	const [ title, setTitle ] = useState('');
@@ -11,6 +11,7 @@ const App = () => {
 	const [ count, setCount ] = useState(0);
 	const [ loading, setLoading ] = useState(false);
 	const [ error, setError ] = useState('');
+	const [ isEdit, setIsEdit ] = useState('');
 
 	const handleFetchBooks = async () => {
 		try {
@@ -44,6 +45,15 @@ const App = () => {
 		}
 	};
 
+	const handleUpdateBook = async (id, title, author) => {
+		try {
+			await updateBook(id, title, author);
+			fetchBooks();
+		} catch (error) {
+			setError('Kunde ej lägga till bok');
+		}
+	};
+
 	const getNewApiKey = () => {
 		localStorage.removeItem('apiKey');
 		requestApiKey();
@@ -61,7 +71,13 @@ const App = () => {
 			<Header getNewApiKey={getNewApiKey} />
 			<Form setTitle={setTitle} setAuthor={setAuthor} handleAddBook={handleAddBook} />
 			{error && <span style={{ color: 'red', textAlign: 'center' }}>{error}</span>}
-			<DisplayBooks count={count} books={books} loading={loading} handleRemoveBook={handleRemoveBook} />
+			<DisplayBooks
+				count={count}
+				books={books}
+				loading={loading}
+				handleRemoveBook={handleRemoveBook}
+				handleUpdateBook={handleUpdateBook}
+			/>
 		</div>
 	);
 };
