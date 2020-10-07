@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import Header from './components/Header/Header';
-import Form from './components/Form/Form';
-import DisplayBooks from './components/DisplayBooks/DisplayBooks';
-import { addBook, fetchBooks, removeBook, requestApiKey } from './utils/api';
+import Header from './components/Header';
+import Form from './components/Form';
+import DisplayBooks from './components/DisplayBooks';
+import { addBook, fetchBooks, removeBook, updateBook, requestApiKey } from './utils/api';
 
 const App = () => {
 	const [ title, setTitle ] = useState('');
@@ -11,6 +11,7 @@ const App = () => {
 	const [ count, setCount ] = useState(0);
 	const [ loading, setLoading ] = useState(false);
 	const [ error, setError ] = useState('');
+	const [ isEdit, setIsEdit ] = useState({ open: false, selectedId: null });
 
 	const handleFetchBooks = async () => {
 		try {
@@ -28,7 +29,7 @@ const App = () => {
 			e.preventDefault();
 			await addBook(title, author);
 			setCount(books.length);
-			fetchBooks();
+			handleFetchBooks();
 		} catch (error) {
 			setError('Kunde ej lägga till bok');
 		}
@@ -38,7 +39,18 @@ const App = () => {
 		try {
 			await removeBook(id);
 			setCount(books.length);
-			fetchBooks();
+			handleFetchBooks();
+		} catch (error) {
+			setError('Kunde ej lägga till bok');
+		}
+	};
+
+	const handleUpdateBook = async (id, title, author) => {
+		try {
+			await updateBook(id, title, author);
+			setIsEdit({ open: false, selectedId: id });
+			console.log(isEdit);
+			handleFetchBooks();
 		} catch (error) {
 			setError('Kunde ej lägga till bok');
 		}
@@ -61,7 +73,15 @@ const App = () => {
 			<Header getNewApiKey={getNewApiKey} />
 			<Form setTitle={setTitle} setAuthor={setAuthor} handleAddBook={handleAddBook} />
 			{error && <span style={{ color: 'red', textAlign: 'center' }}>{error}</span>}
-			<DisplayBooks count={count} books={books} loading={loading} handleRemoveBook={handleRemoveBook} />
+			<DisplayBooks
+				count={count}
+				books={books}
+				loading={loading}
+				handleRemoveBook={handleRemoveBook}
+				handleUpdateBook={handleUpdateBook}
+				setIsEdit={setIsEdit}
+				isEdit={isEdit}
+			/>
 		</div>
 	);
 };
