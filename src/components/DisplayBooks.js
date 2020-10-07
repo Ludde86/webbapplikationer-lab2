@@ -23,6 +23,7 @@ const DisplayBooks = ({ books, loading, handleRemoveBook, handleUpdateBook, setI
 										/>
 									);
 								}
+								return null;
 							})
 						) : (
 							books.map((book) => {

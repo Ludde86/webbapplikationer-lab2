@@ -16,7 +16,7 @@ const App = () => {
 	const handleFetchBooks = async () => {
 		try {
 			setLoading(true);
-			await fetchBooks().then((res) => setBooks(res.data)).catch((err) => console.log(err));
+			await fetchBooks().then((res) => setBooks(res.data)).catch((err) => console.error(err));
 			setCount(books.length);
 			setLoading(false);
 		} catch (error) {
@@ -51,7 +51,6 @@ const App = () => {
 		try {
 			await updateBook(id, title, author);
 			setIsEdit({ open: false, selectedId: id });
-			console.log(isEdit);
 			handleFetchBooks();
 		} catch (error) {
 			setError('Kunde ej lägga till bok');
