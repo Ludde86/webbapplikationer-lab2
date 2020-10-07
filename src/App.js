@@ -11,7 +11,7 @@ const App = () => {
 	const [ count, setCount ] = useState(0);
 	const [ loading, setLoading ] = useState(false);
 	const [ error, setError ] = useState('');
-	const [ isEdit, setIsEdit ] = useState('');
+	const [ isEdit, setIsEdit ] = useState({ open: false, selectedId: null });
 
 	const handleFetchBooks = async () => {
 		try {
@@ -29,7 +29,7 @@ const App = () => {
 			e.preventDefault();
 			await addBook(title, author);
 			setCount(books.length);
-			fetchBooks();
+			handleFetchBooks();
 		} catch (error) {
 			setError('Kunde ej lägga till bok');
 		}
@@ -39,7 +39,7 @@ const App = () => {
 		try {
 			await removeBook(id);
 			setCount(books.length);
-			fetchBooks();
+			handleFetchBooks();
 		} catch (error) {
 			setError('Kunde ej lägga till bok');
 		}
@@ -48,7 +48,9 @@ const App = () => {
 	const handleUpdateBook = async (id, title, author) => {
 		try {
 			await updateBook(id, title, author);
-			fetchBooks();
+			setIsEdit({ open: false, selectedId: id });
+			console.log(isEdit);
+			handleFetchBooks();
 		} catch (error) {
 			setError('Kunde ej lägga till bok');
 		}
@@ -77,6 +79,8 @@ const App = () => {
 				loading={loading}
 				handleRemoveBook={handleRemoveBook}
 				handleUpdateBook={handleUpdateBook}
+				setIsEdit={setIsEdit}
+				isEdit={isEdit}
 			/>
 		</div>
 	);
