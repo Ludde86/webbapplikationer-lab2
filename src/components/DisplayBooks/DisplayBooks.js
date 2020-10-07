@@ -1,12 +1,14 @@
 import React from 'react';
+import Counter from '../Counter/Counter';
 
-const DisplayBooks = ({ books, handleRemoveBook }) => {
+const DisplayBooks = ({ books, loading, handleRemoveBook }) => {
 	return (
 		<div className="display-books">
 			<div className="container">
 				<div className="col-12">
+					<Counter books={books} />
 					<ul className="list-group">
-						{books ? (
+						{books && !loading ? (
 							books.map((book) => {
 								return (
 									<li key={book.id} className="list-item list-group-item d-flex align-items-center">
