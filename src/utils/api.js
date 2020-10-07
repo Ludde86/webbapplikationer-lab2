@@ -48,7 +48,7 @@ export const fetchBooks = async () => {
 	return await sendRequest(params);
 };
 
-export const addBook = async (title, author, limit = 3) => {
+export const addBook = async (title, author) => {
 	const params = {
 		op: 'insert',
 		title,

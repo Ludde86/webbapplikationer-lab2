@@ -9,25 +9,39 @@ const App = () => {
 	const [ author, setAuthor ] = useState('');
 	const [ books, setBooks ] = useState([]);
 	const [ count, setCount ] = useState(0);
-	const [ loading, setLoading ] = useState(true);
+	const [ loading, setLoading ] = useState(false);
+	const [ error, setError ] = useState('');
 
-	const handleFetchBooks = () => {
-		fetchBooks().then((res) => setBooks(res.data)).catch((err) => console.log(err));
-		setCount(books.length);
-		setLoading(false);
+	const handleFetchBooks = async () => {
+		try {
+			setLoading(true);
+			await fetchBooks().then((res) => setBooks(res.data)).catch((err) => console.log(err));
+			setCount(books.length);
+			setLoading(false);
+		} catch (error) {
+			setError('Kunde ej hämta böcker');
+		}
 	};
 
-	const handleAddBook = (e) => {
-		e.preventDefault();
-		addBook(title, author);
-		setCount(books.length);
-		fetchBooks();
+	const handleAddBook = async (e) => {
+		try {
+			e.preventDefault();
+			await addBook(title, author);
+			setCount(books.length);
+			fetchBooks();
+		} catch (error) {
+			setError('Kunde ej lägga till bok');
+		}
 	};
 
-	const handleRemoveBook = (id) => {
-		removeBook(id);
-		setCount(books.length);
-		fetchBooks();
+	const handleRemoveBook = async (id) => {
+		try {
+			await removeBook(id);
+			setCount(books.length);
+			fetchBooks();
+		} catch (error) {
+			setError('Kunde ej lägga till bok');
+		}
 	};
 
 	const getNewApiKey = () => {
@@ -37,7 +51,6 @@ const App = () => {
 
 	useEffect(
 		() => {
-			console.log('effect');
 			handleFetchBooks();
 		},
 		[ count ]
@@ -47,6 +60,7 @@ const App = () => {
 		<div className="App">
 			<Header getNewApiKey={getNewApiKey} />
 			<Form setTitle={setTitle} setAuthor={setAuthor} handleAddBook={handleAddBook} />
+			{error && <span style={{ color: 'red', textAlign: 'center' }}>{error}</span>}
 			<DisplayBooks count={count} books={books} loading={loading} handleRemoveBook={handleRemoveBook} />
 		</div>
 	);
