@@ -29,6 +29,8 @@ const App = () => {
 			e.preventDefault();
 			await addBook(title, author);
 			setCount(books.length);
+			setTitle('');
+			setAuthor('');
 			handleFetchBooks();
 		} catch (error) {
 			setError('Kunde ej lägga till bok');
@@ -71,7 +73,13 @@ const App = () => {
 	return (
 		<div className="App">
 			<Header getNewApiKey={getNewApiKey} />
-			<Form setTitle={setTitle} setAuthor={setAuthor} handleAddBook={handleAddBook} />
+			<Form
+				setTitle={setTitle}
+				setAuthor={setAuthor}
+				handleAddBook={handleAddBook}
+				title={title}
+				author={author}
+			/>
 			{error && <span style={{ color: 'red', textAlign: 'center' }}>{error}</span>}
 			<DisplayBooks
 				count={count}
