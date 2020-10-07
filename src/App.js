@@ -3,6 +3,7 @@ import Header from './components/Header';
 import Form from './components/Form';
 import DisplayBooks from './components/DisplayBooks';
 import { addBook, fetchBooks, removeBook, updateBook, requestApiKey } from './utils/api';
+import Errors from './components/Errors';
 
 const App = () => {
 	const [ title, setTitle ] = useState('');
@@ -10,7 +11,7 @@ const App = () => {
 	const [ books, setBooks ] = useState([]);
 	const [ count, setCount ] = useState(0);
 	const [ loading, setLoading ] = useState(false);
-	const [ error, setError ] = useState('');
+	const [ error, setError ] = useState(null);
 	const [ isEdit, setIsEdit ] = useState({ open: false, selectedId: null });
 
 	const handleFetchBooks = async () => {
@@ -20,7 +21,7 @@ const App = () => {
 			setCount(books.length);
 			setLoading(false);
 		} catch (error) {
-			setError('Kunde ej hämta böcker');
+			setErrors('Kunde ej hämta böcker');
 		}
 	};
 
@@ -33,7 +34,7 @@ const App = () => {
 			setAuthor('');
 			handleFetchBooks();
 		} catch (error) {
-			setError('Kunde ej lägga till bok');
+			setErrors('Kunde ej lägga till bok');
 		}
 	};
 
@@ -43,7 +44,7 @@ const App = () => {
 			setCount(books.length);
 			handleFetchBooks();
 		} catch (error) {
-			setError('Kunde ej lägga till bok');
+			setErrors('Kunde ej lägga till bok');
 		}
 	};
 
@@ -53,13 +54,25 @@ const App = () => {
 			setIsEdit({ open: false, selectedId: id });
 			handleFetchBooks();
 		} catch (error) {
-			setError('Kunde ej lägga till bok');
+			setErrors('Kunde ej uppdatera bok');
 		}
 	};
 
-	const getNewApiKey = () => {
-		localStorage.removeItem('apiKey');
-		requestApiKey();
+	const getNewApiKey = async () => {
+		try {
+			localStorage.removeItem('apiKey');
+			requestApiKey();
+			setErrors('Ny API-nyckel');
+		} catch (error) {
+			setError('Kunde inte hämta API-nyckel');
+		}
+	};
+
+	const setErrors = (error) => {
+		setError(error);
+		setTimeout(() => {
+			setError(null);
+		}, 5000);
 	};
 
 	useEffect(
@@ -71,6 +84,7 @@ const App = () => {
 
 	return (
 		<div className="App">
+			{error && <Errors error={error} />}
 			<Header getNewApiKey={getNewApiKey} />
 			<Form
 				setTitle={setTitle}
@@ -79,7 +93,6 @@ const App = () => {
 				title={title}
 				author={author}
 			/>
-			{error && <span style={{ color: 'red', textAlign: 'center' }}>{error}</span>}
 			<DisplayBooks
 				count={count}
 				books={books}
