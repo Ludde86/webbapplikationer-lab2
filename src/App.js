@@ -63,8 +63,9 @@ const App = () => {
 	const getNewApiKey = async () => {
 		try {
 			localStorage.removeItem('apiKey');
-			requestApiKey();
+			await requestApiKey();
 			setErrors({ success: true, message: 'Ny API-nyckel hämtad' });
+			console.log('new API key: ', localStorage.getItem('apiKey'));
 		} catch (error) {
 			setError({ success: false, message: 'Kunde inte hämta API-nyckel' });
 		}
@@ -83,6 +84,7 @@ const App = () => {
 
 	useEffect(
 		() => {
+			console.log('API key: ', localStorage.getItem('apiKey'));
 			async function fetchData() {
 				try {
 					await handleFetchBooks();
