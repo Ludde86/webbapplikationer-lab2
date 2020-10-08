@@ -12,6 +12,7 @@ const App = () => {
 	const [ count, setCount ] = useState(0);
 	const [ error, setError ] = useState({ success: null, message: '' });
 	const [ isEdit, setIsEdit ] = useState({ open: false, selectedId: null });
+	const [ toggleBookForm, setToggleBookForm ] = useState(true);
 
 	const handleFetchBooks = async () => {
 		try {
@@ -62,11 +63,16 @@ const App = () => {
 	const getNewApiKey = async () => {
 		try {
 			localStorage.removeItem('apiKey');
-			requestApiKey();
+			await requestApiKey();
 			setErrors({ success: true, message: 'Ny API-nyckel hämtad' });
+			console.log('new API key: ', localStorage.getItem('apiKey'));
 		} catch (error) {
 			setError({ success: false, message: 'Kunde inte hämta API-nyckel' });
 		}
+	};
+
+	const handleToggleBookForm = () => {
+		setToggleBookForm(!toggleBookForm);
 	};
 
 	const setErrors = (error) => {
@@ -78,6 +84,7 @@ const App = () => {
 
 	useEffect(
 		() => {
+			console.log('API key: ', localStorage.getItem('apiKey'));
 			async function fetchData() {
 				try {
 					await handleFetchBooks();
@@ -92,14 +99,21 @@ const App = () => {
 
 	return (
 		<div className="App">
-			<Header getNewApiKey={getNewApiKey} />
-			<Form
-				setTitle={setTitle}
-				setAuthor={setAuthor}
-				handleAddBook={handleAddBook}
-				title={title}
-				author={author}
+			<Header
+				getNewApiKey={getNewApiKey}
+				handleToggleBookForm={handleToggleBookForm}
+				toggleBookForm={toggleBookForm}
 			/>
+			{toggleBookForm && (
+				<Form
+					setTitle={setTitle}
+					setAuthor={setAuthor}
+					handleAddBook={handleAddBook}
+					title={title}
+					author={author}
+				/>
+			)}
+
 			{error.message && <Errors error={error} />}
 			{books ? (
 				<DisplayBooks

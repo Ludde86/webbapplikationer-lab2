@@ -79,12 +79,14 @@ header strong {
 	margin-left: 10px;
 }
 
-.get-new-api {
+.get-new-api,
+.add-book-btn {
 	color: white;
 	cursor: pointer;
 }
 
-.get-new-api:hover {
+.get-new-api:hover,
+.add-book-btn:hover {
 	color: green;
 }
 
@@ -98,4 +100,10 @@ header strong {
 	height: 40px;
 	font-weight: 500;
 	z-index: 10;
+}
+
+.header-btns {
+	width: 90%;
+	display: flex;
+	justify-content: space-between;
 }
