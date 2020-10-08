@@ -15,6 +15,7 @@ const Form = ({ handleAddBook, setTitle, setAuthor, title, author }) => {
 							placeholder="Lägg till titel"
 							value={title}
 							onChange={(e) => setTitle(e.target.value)}
+							autoComplete="off"
 						/>
 
 						<input
@@ -29,6 +30,7 @@ const Form = ({ handleAddBook, setTitle, setAuthor, title, author }) => {
 							placeholder="Lägg till författare"
 							value={author}
 							onChange={(e) => setAuthor(e.target.value)}
+							autoComplete="off"
 						/>
 					</div>
 					<button type="submit" className="btn btn-primary btn-lg btn-block">

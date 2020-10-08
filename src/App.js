@@ -10,18 +10,16 @@ const App = () => {
 	const [ author, setAuthor ] = useState('');
 	const [ books, setBooks ] = useState([]);
 	const [ count, setCount ] = useState(0);
-	const [ loading, setLoading ] = useState(false);
-	const [ error, setError ] = useState(null);
+	const [ error, setError ] = useState({ success: null, message: '' });
 	const [ isEdit, setIsEdit ] = useState({ open: false, selectedId: null });
 
 	const handleFetchBooks = async () => {
 		try {
-			setLoading(true);
-			await fetchBooks().then((res) => setBooks(res.data)).catch((err) => console.error(err));
+			let res = await fetchBooks();
+			setBooks(res.data);
 			setCount(books.length);
-			setLoading(false);
 		} catch (error) {
-			setErrors('Kunde ej hämta böcker');
+			setErrors({ success: false, message: 'Kunde ej hämta böcker' });
 		}
 	};
 
@@ -33,8 +31,9 @@ const App = () => {
 			setTitle('');
 			setAuthor('');
 			handleFetchBooks();
+			setErrors({ success: true, message: 'Bok lades till' });
 		} catch (error) {
-			setErrors('Kunde ej lägga till bok');
+			setErrors({ success: false, message: 'Kunde ej lägga till bok' });
 		}
 	};
 
@@ -43,8 +42,9 @@ const App = () => {
 			await removeBook(id);
 			setCount(books.length);
 			handleFetchBooks();
+			setErrors({ success: true, message: 'Bok raderad' });
 		} catch (error) {
-			setErrors('Kunde ej lägga till bok');
+			setErrors({ success: false, message: 'Kunde ej lägga till bok' });
 		}
 	};
 
@@ -53,8 +53,9 @@ const App = () => {
 			await updateBook(id, title, author);
 			setIsEdit({ open: false, selectedId: id });
 			handleFetchBooks();
+			setErrors({ success: true, message: 'Bok uppdaterad' });
 		} catch (error) {
-			setErrors('Kunde ej uppdatera bok');
+			setErrors({ success: false, message: 'Kunde ej uppdatera bok' });
 		}
 	};
 
@@ -62,29 +63,35 @@ const App = () => {
 		try {
 			localStorage.removeItem('apiKey');
 			requestApiKey();
-			setErrors('Ny API-nyckel');
+			setErrors({ success: true, message: 'Ny API-nyckel hämtad' });
 		} catch (error) {
-			setError('Kunde inte hämta API-nyckel');
+			setError({ success: false, message: 'Kunde inte hämta API-nyckel' });
 		}
 	};
 
 	const setErrors = (error) => {
 		setError(error);
 		setTimeout(() => {
-			setError(null);
+			setError({ success: null, message: '' });
 		}, 5000);
 	};
 
 	useEffect(
 		() => {
-			handleFetchBooks();
+			async function fetchData() {
+				try {
+					await handleFetchBooks();
+				} catch (error) {
+					setErrors({ success: false, message: 'Kunde ej hämta böcker' });
+				}
+			}
+			fetchData();
 		},
 		[ count ]
 	);
 
 	return (
 		<div className="App">
-			{error && <Errors error={error} />}
 			<Header getNewApiKey={getNewApiKey} />
 			<Form
 				setTitle={setTitle}
@@ -93,10 +100,10 @@ const App = () => {
 				title={title}
 				author={author}
 			/>
+			{error.message && <Errors error={error} />}
 			<DisplayBooks
 				count={count}
 				books={books}
-				loading={loading}
 				handleRemoveBook={handleRemoveBook}
 				handleUpdateBook={handleUpdateBook}
 				setIsEdit={setIsEdit}

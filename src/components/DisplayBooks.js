@@ -2,17 +2,18 @@ import React from 'react';
 import Book from './Book';
 import Counter from './Counter';
 
-const DisplayBooks = ({ books, loading, handleRemoveBook, handleUpdateBook, setIsEdit, isEdit }) => {
+const DisplayBooks = ({ books, handleRemoveBook, handleUpdateBook, setIsEdit, isEdit }) => {
 	return (
 		<div className="display-books">
 			<div className="container">
 				<div className="col-12">
 					<Counter books={books} />
 					<ul className="list-group">
-						{books && !loading && isEdit.open ? (
+						{books && isEdit.open ? (
 							books.map((book) => {
+								let editBook;
 								if (book.id === isEdit.selectedId) {
-									return (
+									editBook = (
 										<Book
 											key={book.id}
 											book={book}
@@ -23,7 +24,7 @@ const DisplayBooks = ({ books, loading, handleRemoveBook, handleUpdateBook, setI
 										/>
 									);
 								}
-								return null;
+								return editBook;
 							})
 						) : (
 							books.map((book) => {
