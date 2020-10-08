@@ -101,14 +101,20 @@ const App = () => {
 				author={author}
 			/>
 			{error.message && <Errors error={error} />}
-			<DisplayBooks
-				count={count}
-				books={books}
-				handleRemoveBook={handleRemoveBook}
-				handleUpdateBook={handleUpdateBook}
-				setIsEdit={setIsEdit}
-				isEdit={isEdit}
-			/>
+			{books ? (
+				<DisplayBooks
+					count={count}
+					books={books}
+					handleRemoveBook={handleRemoveBook}
+					handleUpdateBook={handleUpdateBook}
+					setIsEdit={setIsEdit}
+					isEdit={isEdit}
+				/>
+			) : (
+				<Errors
+					error={{ success: false, message: 'Fel när böckerna skulle hämtas. Vänligen ladda om sidan' }}
+				/>
+			)}
 		</div>
 	);
 };
