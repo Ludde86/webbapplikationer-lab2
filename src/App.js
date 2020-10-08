@@ -12,6 +12,7 @@ const App = () => {
 	const [ count, setCount ] = useState(0);
 	const [ error, setError ] = useState({ success: null, message: '' });
 	const [ isEdit, setIsEdit ] = useState({ open: false, selectedId: null });
+	const [ toggleBookForm, setToggleBookForm ] = useState(true);
 
 	const handleFetchBooks = async () => {
 		try {
@@ -69,6 +70,10 @@ const App = () => {
 		}
 	};
 
+	const handleToggleBookForm = () => {
+		setToggleBookForm(!toggleBookForm);
+	};
+
 	const setErrors = (error) => {
 		setError(error);
 		setTimeout(() => {
@@ -92,14 +97,21 @@ const App = () => {
 
 	return (
 		<div className="App">
-			<Header getNewApiKey={getNewApiKey} />
-			<Form
-				setTitle={setTitle}
-				setAuthor={setAuthor}
-				handleAddBook={handleAddBook}
-				title={title}
-				author={author}
+			<Header
+				getNewApiKey={getNewApiKey}
+				handleToggleBookForm={handleToggleBookForm}
+				toggleBookForm={toggleBookForm}
 			/>
+			{toggleBookForm && (
+				<Form
+					setTitle={setTitle}
+					setAuthor={setAuthor}
+					handleAddBook={handleAddBook}
+					title={title}
+					author={author}
+				/>
+			)}
+
 			{error.message && <Errors error={error} />}
 			{books ? (
 				<DisplayBooks
