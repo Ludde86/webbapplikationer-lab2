@@ -3,24 +3,23 @@ import Header from './components/Header';
 import Form from './components/Form';
 import DisplayBooks from './components/DisplayBooks';
 import { addBook, fetchBooks, removeBook, updateBook, requestApiKey } from './utils/api';
+import Errors from './components/Errors';
 
 const App = () => {
 	const [ title, setTitle ] = useState('');
 	const [ author, setAuthor ] = useState('');
 	const [ books, setBooks ] = useState([]);
 	const [ count, setCount ] = useState(0);
-	const [ loading, setLoading ] = useState(false);
-	const [ error, setError ] = useState('');
+	const [ error, setError ] = useState({ success: null, message: '' });
 	const [ isEdit, setIsEdit ] = useState({ open: false, selectedId: null });
 
 	const handleFetchBooks = async () => {
 		try {
-			setLoading(true);
-			await fetchBooks().then((res) => setBooks(res.data)).catch((err) => console.error(err));
+			let res = await fetchBooks();
+			setBooks(res.data);
 			setCount(books.length);
-			setLoading(false);
 		} catch (error) {
-			setError('Kunde ej hämta böcker');
+			setErrors({ success: false, message: 'Kunde ej hämta böcker' });
 		}
 	};
 
@@ -32,8 +31,9 @@ const App = () => {
 			setTitle('');
 			setAuthor('');
 			handleFetchBooks();
+			setErrors({ success: true, message: 'Bok lades till' });
 		} catch (error) {
-			setError('Kunde ej lägga till bok');
+			setErrors({ success: false, message: 'Kunde ej lägga till bok' });
 		}
 	};
 
@@ -42,8 +42,9 @@ const App = () => {
 			await removeBook(id);
 			setCount(books.length);
 			handleFetchBooks();
+			setErrors({ success: true, message: 'Bok raderad' });
 		} catch (error) {
-			setError('Kunde ej lägga till bok');
+			setErrors({ success: false, message: 'Kunde ej lägga till bok' });
 		}
 	};
 
@@ -52,19 +53,39 @@ const App = () => {
 			await updateBook(id, title, author);
 			setIsEdit({ open: false, selectedId: id });
 			handleFetchBooks();
+			setErrors({ success: true, message: 'Bok uppdaterad' });
 		} catch (error) {
-			setError('Kunde ej lägga till bok');
+			setErrors({ success: false, message: 'Kunde ej uppdatera bok' });
 		}
 	};
 
-	const getNewApiKey = () => {
-		localStorage.removeItem('apiKey');
-		requestApiKey();
+	const getNewApiKey = async () => {
+		try {
+			localStorage.removeItem('apiKey');
+			requestApiKey();
+			setErrors({ success: true, message: 'Ny API-nyckel hämtad' });
+		} catch (error) {
+			setError({ success: false, message: 'Kunde inte hämta API-nyckel' });
+		}
+	};
+
+	const setErrors = (error) => {
+		setError(error);
+		setTimeout(() => {
+			setError({ success: null, message: '' });
+		}, 5000);
 	};
 
 	useEffect(
 		() => {
-			handleFetchBooks();
+			async function fetchData() {
+				try {
+					await handleFetchBooks();
+				} catch (error) {
+					setErrors({ success: false, message: 'Kunde ej hämta böcker' });
+				}
+			}
+			fetchData();
 		},
 		[ count ]
 	);
@@ -79,11 +100,10 @@ const App = () => {
 				title={title}
 				author={author}
 			/>
-			{error && <span style={{ color: 'red', textAlign: 'center' }}>{error}</span>}
+			{error.message && <Errors error={error} />}
 			<DisplayBooks
 				count={count}
 				books={books}
-				loading={loading}
 				handleRemoveBook={handleRemoveBook}
 				handleUpdateBook={handleUpdateBook}
 				setIsEdit={setIsEdit}

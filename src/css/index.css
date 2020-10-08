@@ -87,3 +87,15 @@ header strong {
 .get-new-api:hover {
 	color: green;
 }
+
+.errors {
+	position: fixed;
+	bottom: 0;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	width: 100%;
+	height: 40px;
+	font-weight: 500;
+	z-index: 10;
+}
